@@ -92,6 +92,7 @@ function showCash() {
 
 
 
+
 function draw() {
   // Grass
   ctx.fillStyle = "#709b58";
@@ -112,27 +113,23 @@ function draw() {
   ctx.fillRect(0, 99, 600, 16);
   ctx.fillRect(0, 235, 600, 16);
 
-  // Left building
+  // Buildings and shop
   ctx.fillStyle = "#a96743";
   ctx.fillRect(18, 18, 125, 76);
-  ctx.fillStyle = "#e8d4a9";
-  ctx.fillRect(28, 28, 105, 15);
 
-  // Windows
   ctx.fillStyle = "#315b70";
   ctx.fillRect(31, 49, 25, 26);
   ctx.fillRect(67, 49, 25, 26);
 
-  // Door
   ctx.fillStyle = "#423126";
   ctx.fillRect(105, 53, 25, 41);
 
-  // Right shop
   ctx.fillStyle = "#d6d0bd";
   ctx.fillRect(435, 257, 145, 76);
   ctx.fillStyle = "#347b62";
   ctx.fillRect(447, 268, 121, 18);
-  ctx.fillStyle = "#222b2a";
+
+  ctx.fillStyle = "#ffffff";
   ctx.font = "bold 13px Arial";
   ctx.fillText("LAGOS SHOP", 455, 281);
 
@@ -144,12 +141,11 @@ function draw() {
   ctx.fillStyle = "#3e454a";
   ctx.fillRect(0, 115, 600, 120);
 
-  // Road edges
   ctx.fillStyle = "#d8d2bd";
   ctx.fillRect(0, 115, 600, 3);
   ctx.fillRect(0, 232, 600, 3);
 
-  // Yellow road markings
+  // Road markings
   ctx.strokeStyle = "#f8e6a3";
   ctx.lineWidth = 3;
   ctx.setLineDash([22, 18]);
@@ -188,55 +184,6 @@ function draw() {
   ctx.fillRect(x - 8, y - 19, 16, 4);
   }
   
-               
-
-  // Road
-  ctx.fillStyle = "#424b50";
-  ctx.fillRect(0, 115, 600, 120);
-  ctx.strokeStyle = "#f5e4a0";
-  ctx.lineWidth = 3;
-  ctx.setLineDash([20, 15]);
-  ctx.beginPath();
-  ctx.moveTo(0, 175);
-  ctx.lineTo(600, 175);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Buildings
-  ctx.fillStyle = "#c78c53";
-  ctx.fillRect(20, 20, 120, 75);
-  ctx.fillRect(460, 245, 120, 75);
-  ctx.fillStyle = "#a9d7e8";
-  ctx.fillRect(35, 32, 28, 25);
-  ctx.fillRect(80, 32, 28, 25);
-  ctx.fillStyle = "#f0bf42";
-  ctx.fillRect(475, 258, 90, 12);
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "15px Arial";
-  ctx.fillText("SHOP", 487, 295);
-
-  // Car
-  ctx.fillStyle = "#202b31";
-  ctx.fillRect(170, 135, 65, 28);
-  ctx.fillStyle = "#df443c";
-  ctx.fillRect(175, 139, 55, 20);
-  ctx.fillStyle = "#b9e3ee";
-  ctx.fillRect(184, 141, 15, 8);
-  ctx.fillRect(204, 141, 15, 8);
-
-  // Player
-  ctx.fillStyle = "#202b31";
-  ctx.fillRect(x - 7, y + 7, 5, 12);
-  ctx.fillRect(x + 2, y + 7, 5, 12);
-  ctx.fillStyle = "#f0bf42";
-  ctx.fillRect(x - 9, y - 5, 18, 15);
-  ctx.fillStyle = "#f1c29c";
-  ctx.beginPath();
-  ctx.arc(x, y - 12, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#202b31";
-  ctx.fillRect(x - 8, y - 19, 16, 4);
-}
 
 function move(dx, dy) {
   x = Math.max(12, Math.min(588, x + dx));
