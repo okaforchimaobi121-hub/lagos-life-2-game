@@ -1,0 +1,104 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lagos Life 2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #17232c;
+      color: white;
+      text-align: center;
+      padding: 16px;
+    }
+    canvas {
+      width: 100%;
+      max-width: 600px;
+      background: #65915a;
+      border: 3px solid #d8b36a;
+      border-radius: 10px;
+    }
+    button {
+      padding: 14px;
+      margin: 5px;
+      border: 0;
+      border-radius: 8px;
+      font-size: 17px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏙️ Lagos Life 2</h1>
+  <p>Grass to Grace</p>
+  <p>Game cash: ₦<span id="cash">500</span></p>
+
+  <canvas id="game" width="600" height="350"></canvas>
+
+  <div>
+    <button onclick="move(0,-15)">⬆️</button><br>
+    <button onclick="move(-15,0)">⬅️</button>
+    <button onclick="move(15,0)">➡️</button><br>
+    <button onclick="move(0,15)">⬇️</button>
+    <button onclick="job()">Look for a job (+₦100)</button>
+  </div>
+
+  <p id="message">Welcome to Lagos!</p>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    let x = 300, y = 175, cash = 500;
+
+    function draw() {
+      ctx.fillStyle = "#65915a";
+      ctx.fillRect(0, 0, 600, 350);
+
+      ctx.fillStyle = "#424b50";
+      ctx.fillRect(0, 115, 600, 120);
+
+      ctx.strokeStyle = "#f5e4a0";
+      ctx.setLineDash([20, 15]);
+      ctx.beginPath();
+      ctx.moveTo(0, 175);
+      ctx.lineTo(600, 175);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#c78c53";
+      ctx.fillRect(20, 20, 120, 75);
+      ctx.fillRect(460, 245, 120, 75);
+
+      ctx.fillStyle = "#202b31";
+      ctx.fillRect(170, 135, 65, 28);
+      ctx.fillStyle = "#df443c";
+      ctx.fillRect(175, 139, 55, 20);
+
+      ctx.fillStyle = "#f0bf42";
+      ctx.fillRect(x - 9, y - 5, 18, 22);
+      ctx.fillStyle = "#f1c29c";
+      ctx.beginPath();
+      ctx.arc(x, y - 12, 8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function move(dx, dy) {
+      x = Math.max(12, Math.min(588, x + dx));
+      y = Math.max(15, Math.min(338, y + dy));
+      draw();
+    }
+
+    function job() {
+      cash += 100;
+      document.getElementById("cash").textContent =
+        cash.toLocaleString("en-NG");
+      document.getElementById("message").textContent =
+        "Job completed! This is demo game cash, not real money.";
+    }
+
+    draw();
+  </script>
+</body>
+    </html>
+      
