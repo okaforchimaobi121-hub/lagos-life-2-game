@@ -1,104 +1,298 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lagos Life 2</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #17232c;
-      color: white;
-      text-align: center;
-      padding: 16px;
-    }
-    canvas {
-      width: 100%;
-      max-width: 600px;
-      background: #65915a;
-      border: 3px solid #d8b36a;
-      border-radius: 10px;
-    }
-    button {
-      padding: 14px;
-      margin: 5px;
-      border: 0;
-      border-radius: 8px;
-      font-size: 17px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lagos Life 2</title>
+<style>
+  body { margin:0; padding:16px; background:#17232c; color:white;
+    font-family:Arial,sans-serif; text-align:center; }
+  main { max-width:650px; margin:auto; }
+  section { background:#263641; padding:14px; border-radius:12px;
+    margin:12px 0; text-align:left; }
+  input,button { box-sizing:border-box; width:100%; padding:12px;
+    margin:5px 0; border-radius:8px; font-size:16px; }
+  input { border:1px solid #aaa; background:white; color:#111; }
+  button { border:0; background:#f0bf42; color:#17232c;
+    font-weight:bold; cursor:pointer; }
+  button:disabled { opacity:.5; }
+  .controls { display:grid; grid-template-columns:repeat(3,1fr);
+    gap:5px; max-width:300px; margin:12px auto; }
+  .controls button { min-height:48px; }
+  canvas { display:block; width:100%; height:auto;
+    border:3px solid #d8b36a; border-radius:10px; }
+  #message { overflow-wrap:anywhere; }
+  .small { color:#d6e0e6; font-size:14px; }
+</style>
 </head>
 <body>
+<main>
   <h1>🏙️ Lagos Life 2</h1>
   <p>Grass to Grace</p>
-  <p>Game cash: ₦<span id="cash">500</span></p>
+  <p>Game cash: ₦<strong id="cash">500</strong></p>
 
-  <canvas id="game" width="600" height="350"></canvas>
+  <canvas id="game" width="600" height="350"
+    aria-label="Top-down Lagos street game"></canvas>
 
-  <div>
-    <button onclick="move(0,-15)">⬆️</button><br>
-    <button onclick="move(-15,0)">⬅️</button>
-    <button onclick="move(15,0)">➡️</button><br>
-    <button onclick="move(0,15)">⬇️</button>
-    <button onclick="job()">Look for a job (+₦100)</button>
+  <div class="controls">
+    <span></span><button onclick="move(0,-15)">⬆️ Up</button><span></span>
+    <button onclick="move(-15,0)">⬅️ Left</button>
+    <button onclick="job()">Find job</button>
+    <button onclick="move(15,0)">Right ➡️</button>
+    <span></span><button onclick="move(0,15)">⬇️ Down</button><span></span>
   </div>
 
-  <p id="message">Welcome to Lagos!</p>
+  <section>
+    <h2>Player account</h2>
+    <label for="displayName">Display name (for registration)</label>
+    <input id="displayName" placeholder="Your game name" maxlength="60">
+    <label for="email">Email address</label>
+    <input id="email" type="email" autocomplete="email"
+      placeholder="you@example.com">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password"
+      placeholder="At least 8 characters">
+    <button id="registerBtn" onclick="registerPlayer()">Register</button>
+    <button id="loginBtn" onclick="loginPlayer()">Login</button>
+    <button onclick="logout()">Logout</button>
+    <p id="account">Not logged in</p>
+  </section>
 
-  <script>
-    const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d");
-    let x = 300, y = 175, cash = 500;
+  <section>
+    <h2>Save your game</h2>
+    <button onclick="saveProgress()">Save Progress</button>
+    <button onclick="loadProgress()">Load Progress</button>
+    <p class="small">Sign in before saving or loading. Your progress is
+      stored on the game server. Game cash is demo money only.</p>
+  </section>
+  <p id="message" role="status" aria-live="polite">
+    Welcome to Lagos!
+  </p>
+</main>
 
-    function draw() {
-      ctx.fillStyle = "#65915a";
-      ctx.fillRect(0, 0, 600, 350);
+<script>
+const API = "https://lagos-life-2-backend.onrender.com";
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-      ctx.fillStyle = "#424b50";
-      ctx.fillRect(0, 115, 600, 120);
+let x = 300, y = 175, cash = 500;
+let token = null;
+let player = null;
+let busy = false;
 
-      ctx.strokeStyle = "#f5e4a0";
-      ctx.setLineDash([20, 15]);
-      ctx.beginPath();
-      ctx.moveTo(0, 175);
-      ctx.lineTo(600, 175);
-      ctx.stroke();
-      ctx.setLineDash([]);
+function message(text) {
+  document.getElementById("message").textContent = text;
+}
 
-      ctx.fillStyle = "#c78c53";
-      ctx.fillRect(20, 20, 120, 75);
-      ctx.fillRect(460, 245, 120, 75);
+function showCash() {
+  document.getElementById("cash").textContent =
+    cash.toLocaleString("en-NG");
+}
 
-      ctx.fillStyle = "#202b31";
-      ctx.fillRect(170, 135, 65, 28);
-      ctx.fillStyle = "#df443c";
-      ctx.fillRect(175, 139, 55, 20);
+function draw() {
+  ctx.fillStyle = "#65915a";
+  ctx.fillRect(0, 0, 600, 350);
 
-      ctx.fillStyle = "#f0bf42";
-      ctx.fillRect(x - 9, y - 5, 18, 22);
-      ctx.fillStyle = "#f1c29c";
-      ctx.beginPath();
-      ctx.arc(x, y - 12, 8, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  // Road
+  ctx.fillStyle = "#424b50";
+  ctx.fillRect(0, 115, 600, 120);
+  ctx.strokeStyle = "#f5e4a0";
+  ctx.lineWidth = 3;
+  ctx.setLineDash([20, 15]);
+  ctx.beginPath();
+  ctx.moveTo(0, 175);
+  ctx.lineTo(600, 175);
+  ctx.stroke();
+  ctx.setLineDash([]);
 
-    function move(dx, dy) {
-      x = Math.max(12, Math.min(588, x + dx));
-      y = Math.max(15, Math.min(338, y + dy));
+  // Buildings
+  ctx.fillStyle = "#c78c53";
+  ctx.fillRect(20, 20, 120, 75);
+  ctx.fillRect(460, 245, 120, 75);
+  ctx.fillStyle = "#a9d7e8";
+  ctx.fillRect(35, 32, 28, 25);
+  ctx.fillRect(80, 32, 28, 25);
+  ctx.fillStyle = "#f0bf42";
+  ctx.fillRect(475, 258, 90, 12);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "15px Arial";
+  ctx.fillText("SHOP", 487, 295);
+
+  // Car
+  ctx.fillStyle = "#202b31";
+  ctx.fillRect(170, 135, 65, 28);
+  ctx.fillStyle = "#df443c";
+  ctx.fillRect(175, 139, 55, 20);
+  ctx.fillStyle = "#b9e3ee";
+  ctx.fillRect(184, 141, 15, 8);
+  ctx.fillRect(204, 141, 15, 8);
+
+  // Player
+  ctx.fillStyle = "#202b31";
+  ctx.fillRect(x - 7, y + 7, 5, 12);
+  ctx.fillRect(x + 2, y + 7, 5, 12);
+  ctx.fillStyle = "#f0bf42";
+  ctx.fillRect(x - 9, y - 5, 18, 15);
+  ctx.fillStyle = "#f1c29c";
+  ctx.beginPath();
+  ctx.arc(x, y - 12, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#202b31";
+  ctx.fillRect(x - 8, y - 19, 16, 4);
+}
+
+function move(dx, dy) {
+  x = Math.max(12, Math.min(588, x + dx));
+  y = Math.max(22, Math.min(330, y + dy));
+  draw();
+}
+
+function job() {
+  cash += 100;
+  showCash();
+  message("Job completed! +₦100 demo game cash.");
+}
+
+async function api(path, options = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = "Bearer " + token;
+
+  let response;
+  try {
+    response = await fetch(API + path, {
+      ...options,
+      headers: { ...headers, ...(options.headers || {}) }
+    });
+  } catch (e) {
+    throw new Error("Cannot reach server. Check the URL or server CORS settings.");
+  }
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || data.message || ("Request failed: " + response.status));
+  }
+  return data;
+}
+
+async function registerPlayer() {
+  if (busy) return;
+  const displayName = document.getElementById("displayName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!displayName || !email || password.length < 8) {
+    message("Enter your display name, email, and password of at least 8 characters.");
+    return;
+  }
+
+  busy = true;
+  document.getElementById("registerBtn").disabled = true;
+  try {
+    const data = await api("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, password, displayName })
+    });
+    token = data.token;
+    player = data.player;
+    updateAccount();
+    message("Account created! You are now logged in.");
+    await loadProgress(true);
+  } catch (e) {
+    message("Registration: " + e.message);
+  } finally {
+    busy = false;
+    document.getElementById("registerBtn").disabled = false;
+  }
+}
+
+async function loginPlayer() {
+  if (busy) return;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if (!email || !password) {
+    message("Enter your email and password.");
+    return;
+  }
+
+  busy = true;
+  document.getElementById("loginBtn").disabled = true;
+  try {
+    const data = await api("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password })
+    });
+    token = data.token;
+    player = data.player;
+    updateAccount();
+    message("Login successful. Loading saved game...");
+    await loadProgress(true);
+  } catch (e) {
+    message("Login: " + e.message);
+  } finally {
+    busy = false;
+    document.getElementById("loginBtn").disabled = false;
+  }
+}
+
+function updateAccount() {
+  document.getElementById("account").textContent = player
+    ? "Logged in as " + (player.display_name || player.displayName || player.email)
+    : "Not logged in";
+}
+
+function logout() {
+  token = null;
+  player = null;
+  updateAccount();
+  message("Logged out. Sign in again to save or load your game.");
+}
+
+async function saveProgress() {
+  if (!token) {
+    message("Please log in before saving.");
+    return;
+  }
+  try {
+    await api("/api/me/game-state", {
+      method: "PUT",
+      body: JSON.stringify({ state: { x, y, cash } })
+    });
+    message("Progress saved to your account!");
+  } catch (e) {
+    message("Save failed: " + e.message);
+  }
+}
+
+async function loadProgress(silent = false) {
+  if (!token) {
+    if (!silent) message("Please log in before loading.");
+    return;
+  }
+  try {
+    const data = await api("/api/me");
+    const state = data.game_state || (data.player && data.player.game_state);
+    if (state && typeof state === "object" &&
+        Number.isFinite(Number(state.cash)) &&
+        Number.isFinite(Number(state.x)) &&
+        Number.isFinite(Number(state.y))) {
+      cash = Math.max(0, Math.min(100000000, Number(state.cash)));
+      x = Math.max(12, Math.min(588, Number(state.x)));
+      y = Math.max(22, Math.min(330, Number(state.y)));
+      showCash();
       draw();
+      message("Saved progress loaded successfully!");
+    } else if (!silent) {
+      message("No saved game found yet. Play and tap Save Progress.");
     }
+  } catch (e) {
+    message("Load failed: " + e.message);
+  }
+}
 
-    function job() {
-      cash += 100;
-      document.getElementById("cash").textContent =
-        cash.toLocaleString("en-NG");
-      document.getElementById("message").textContent =
-        "Job completed! This is demo game cash, not real money.";
-    }
-
-    draw();
-  </script>
+draw();
+showCash();
+</script>
 </body>
-    </html>
-      
+      </html>
+  
