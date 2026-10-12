@@ -163,14 +163,20 @@ function draw() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Car
-  ctx.fillStyle = "#20252b";
-  ctx.fillRect(170, 135, 65, 28);
-  ctx.fillStyle = "#df443c";
-  ctx.fillRect(175, 139, 55, 20);
-  ctx.fillStyle = "#b9e3ee";
-  ctx.fillRect(184, 141, 15, 8);
-  ctx.fillRect(204, 141, 15, 8);
+  
+  // Moving cars
+  cars.forEach(car => {
+    ctx.fillStyle = "#20252b";
+    ctx.fillRect(car.x, car.y, 65, 28);
+
+    ctx.fillStyle = car.color;
+    ctx.fillRect(car.x + 5, car.y + 4, 55, 20);
+
+    ctx.fillStyle = "#b9e3ee";
+    ctx.fillRect(car.x + 14, car.y + 6, 15, 8);
+    ctx.fillRect(car.x + 34, car.y + 6, 15, 8);
+  });
+    
 
   // Player legs
   ctx.fillStyle = "#20252b";
