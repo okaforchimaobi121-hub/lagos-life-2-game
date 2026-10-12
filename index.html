@@ -359,8 +359,12 @@ async function loadProgress(silent = false) {
   }
 }
 
-draw();
 showCash();
+
+if (!animationStarted) {
+  animationStarted = true;
+  animateCars();
+}
 </script>
 </body>
       </html>
