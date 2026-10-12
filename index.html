@@ -81,6 +81,14 @@ let token = null;
 let player = null;
 let busy = false;
 
+const cars = [
+  { x: 40, y: 135, speed: 2.0, color: "#df443c" },
+  { x: 350, y: 195, speed: -1.5, color: "#3b82c4" },
+  { x: 520, y: 145, speed: 1.7, color: "#f0bf42" }
+];
+
+let animationStarted = false;
+  
 function message(text) {
   document.getElementById("message").textContent = text;
 }
