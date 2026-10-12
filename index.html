@@ -198,6 +198,18 @@ function draw() {
   ctx.fillRect(x - 8, y - 19, 16, 4);
   }
   
+function animateCars() {
+  cars.forEach(car => {
+    car.x += car.speed;
+
+    if (car.x > 610) car.x = -70;
+    if (car.x < -70) car.x = 610;
+  });
+
+  draw();
+  requestAnimationFrame(animateCars);
+               }
+    
 
 function move(dx, dy) {
   x = Math.max(12, Math.min(588, x + dx));
