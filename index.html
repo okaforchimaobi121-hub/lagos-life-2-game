@@ -151,7 +151,7 @@ function makeCar(x,z,color,direction=1){
 function makePlayer(){
  const g=new THREE.Group();
  const skin=mat("#8e5638"), shirt=mat("#f2bd43"), pants=mat("#253746"), shoe=mat("#181e21");
- const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.27,.55,4,8),shirt);torso.position.y=1.15;torso.castShadow=true;g.add(torso);
+ const torso=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.75,12),shirt);torso.position.y=1.15;torso.castShadow=true;g.add(torso);
  const head=new THREE.Mesh(new THREE.SphereGeometry(.22,12,10),skin);head.position.y=1.78;head.castShadow=true;g.add(head);
  const hair=new THREE.Mesh(new THREE.SphereGeometry(.225,12,8,0,Math.PI*2,0,Math.PI*.55),mat("#211a17"));hair.position.y=1.85;g.add(hair);
  const limbs=[];
