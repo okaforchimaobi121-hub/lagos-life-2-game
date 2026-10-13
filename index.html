@@ -157,7 +157,7 @@ function makePlayer(){
  const limbs=[];
  for(const sx of [-1,1]){
   const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,.5,8),shirt);arm.position.set(sx*.34,1.2,0);arm.rotation.z=-sx*.12;arm.castShadow=true;g.add(arm);
-  const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.1,.48,3,6),pants);leg.position.set(sx*.13,.48,0);leg.castShadow=true;g.add(leg);limbs.push(leg);
+  const leg=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.58,8),pants);leg.position.set(sx*.13,.48,0);leg.castShadow=true;g.add(leg);limbs.push(leg);
   const foot=new THREE.Mesh(new THREE.BoxGeometry(.2,.1,.32),shoe);foot.position.set(sx*.13,.12,.07);g.add(foot);
  }
  g.userData.legs=limbs;scene.add(g);return g;
