@@ -156,7 +156,7 @@ function makePlayer(){
  const hair=new THREE.Mesh(new THREE.SphereGeometry(.225,12,8,0,Math.PI*2,0,Math.PI*.55),mat("#211a17"));hair.position.y=1.85;g.add(hair);
  const limbs=[];
  for(const sx of [-1,1]){
-  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.42,3,6),shirt);arm.position.set(sx*.34,1.2,0);arm.rotation.z=-sx*.12;arm.castShadow=true;g.add(arm);
+  const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,.5,8),shirt);arm.position.set(sx*.34,1.2,0);arm.rotation.z=-sx*.12;arm.castShadow=true;g.add(arm);
   const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.1,.48,3,6),pants);leg.position.set(sx*.13,.48,0);leg.castShadow=true;g.add(leg);limbs.push(leg);
   const foot=new THREE.Mesh(new THREE.BoxGeometry(.2,.1,.32),shoe);foot.position.set(sx*.13,.12,.07);g.add(foot);
  }
