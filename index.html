@@ -322,15 +322,50 @@ async function saveProgress(){
 })});message("Progress saved to your account.")}
  catch(e){message("Save failed: "+e.message)}
 }
+
 async function loadProgress(silent=false){
- if(!token){if(!silent)message("Please log in before loading.");return}
+ if(!token){
+  if(!silent) message("Please log in before loading.");
+  return;
+ }
+
  try{
-  const data=await api("/api/me");const state=data.game_state||(data.player&&data.player.game_state);
-  if(state&&typeof state==="object"&&Number.isFinite(Number(state.cash))&&Number.isFinite(Number(state.x))&&Number.isFinite(Number(state.y))){
-   cash=Math.max(0,Math.min(100000000,Number(state.cash)));playerPos.x=Math.max(-4.8,Math.min(4.8,Number(state.x)));playerPos.z=Math.max(-42,Math.min(42,Number(state.y)));showCash();if(!silent)message("Saved progress loaded.")
-  }else if(!silent)message("No saved game found yet. Explore and tap Save progress.")
- }catch(e){message("Load failed: "+e.message)}
-}
+  const data=await api("/api/me");
+  const state=data.game_state||(data.player&&data.player.game_state);
+
+  if(
+   state &&
+   typeof state==="object" &&
+   Number.isFinite(Number(state.cash)) &&
+   Number.isFinite(Number(state.x)) &&
+   Number.isFinite(Number(state.y))
+  ){
+   cash=Math.max(0,Math.min(100000000,Number(state.cash)));
+   playerPos.x=Math.max(-8.5,Math.min(8.5,Number(state.x)));
+   playerPos.z=Math.max(-42,Math.min(42,Number(state.y)));
+
+   inventory.groceries=Math.max(
+    0,
+    Number(state.inventory?.groceries)||0
+   );
+
+   if(playerMesh){
+    playerMesh.position.set(playerPos.x,0,playerPos.z);
+   }
+
+   showCash();
+
+   if(!silent){
+    message("Saved game loaded! Groceries: "+inventory.groceries);
+   }
+  }else if(!silent){
+   message("No saved game found yet. Explore and save your progress.");
+  }
+ }catch(e){
+  message("Load failed: "+e.message);
+ }
+ }
+  
 showCash();
 try{init3D();window.addEventListener("resize",resize3D)}catch(e){loading.textContent="Could not start 3D city: "+e.message;message("3D startup error. Refresh the page or try another browser.")}
 </script>
