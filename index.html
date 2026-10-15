@@ -280,7 +280,7 @@ function animate(t=0){
 }
 function movePlayer(dx,dz){
  if(!playerMesh)return;
- playerPos.x=Math.max(-4.8,Math.min(4.8,playerPos.x+dx*1.2));
+ playerPos.x=Math.max(-8.5,Math.min(8.5,playerPos.x+dx*1.2));
  playerPos.z=Math.max(-42,Math.min(42,playerPos.z+dz*1.8));
  playerMesh.rotation.y=Math.atan2(dx,dz);
  message("Exploring Lasgidi District… Keep to the roadside and watch the traffic.");
