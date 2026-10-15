@@ -87,6 +87,36 @@ let renderer,scene,camera,playerMesh;
 let playerPos={x:0,z:4};
 let cash=500,token=null,player=null,busy=false;
 const movingCars=[];
+ const inventory = { groceries: 0 };
+
+function interact() {
+  // The roadside market stalls are on the left side of the road.
+  const stalls = [-29, -15, -1, 13, 27];
+
+  const nearMarket = playerPos.x <= -5.5 &&
+    stalls.some(z => Math.abs(playerPos.z - z) < 3.5);
+
+  if (!nearMarket) {
+    message("Move toward the market stalls on the left side of the road to buy goods.");
+    return;
+  }
+
+  const price = 150;
+
+  if (cash < price) {
+    message("You need ₦150 to buy groceries. Find a job first.");
+    return;
+  }
+
+  cash -= price;
+  inventory.groceries += 1;
+  showCash();
+
+  message(
+    "Purchase successful! You bought groceries for ₦150. " +
+    "Groceries owned: " + inventory.groceries
+  );
+ }
 function message(t){document.getElementById("message").textContent=t}
 function showCash(){document.getElementById("cash").textContent=Math.floor(cash).toLocaleString("en-NG")}
 function mat(color,roughness=0.88){return new THREE.MeshStandardMaterial({color,roughness})}
