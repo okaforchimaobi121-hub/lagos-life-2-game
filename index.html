@@ -312,7 +312,14 @@ function updateAccount(){document.getElementById("account").textContent=player?"
 function logout(){token=null;player=null;updateAccount();message("Logged out. Sign in again to save or load progress.")}
 async function saveProgress(){
  if(!token){message("Please log in before saving.");return}
- try{await api("/api/me/game-state",{method:"PUT",body:JSON.stringify({state:{x:playerPos.x,y:playerPos.z,cash}})});message("Progress saved to your account.")}
+ try{await api("/api/me/game-state",{method:"PUT",body:JSON.stringify({
+  state:{
+    x:playerPos.x,
+    y:playerPos.z,
+    cash,
+    inventory
+  }
+})});message("Progress saved to your account.")}
  catch(e){message("Save failed: "+e.message)}
 }
 async function loadProgress(silent=false){
