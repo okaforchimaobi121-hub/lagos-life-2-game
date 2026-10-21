@@ -2,373 +2,183 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#12232b">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#101b22">
 <title>Lagos Life 2 — Grass to Grace</title>
 <style>
-:root{--gold:#f5c451;--ink:#10212a;--panel:#172e38;--muted:#b9cbd1}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#0d1b22;color:#f7fafb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-body{padding:10px}
-main{max-width:900px;margin:auto}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 4px 12px}
-h1{font-size:clamp(20px,5vw,30px);margin:0;color:var(--gold)}
-.tagline{font-size:12px;color:var(--muted);margin-top:3px}
-.money{background:#1b3540;border:1px solid #385560;border-radius:12px;padding:9px 12px;white-space:nowrap;font-size:13px}
-.money strong{display:block;font-size:18px;color:var(--gold)}
-#sceneWrap{position:relative;border:2px solid #b88d3c;border-radius:16px;overflow:hidden;background:#8bb7bc;box-shadow:0 12px 30px #0005}
-#scene{display:block;width:100%;height:clamp(320px,62vw,520px);touch-action:none;outline:none}
-.sceneLabel{position:absolute;top:10px;left:10px;background:#10212ad9;padding:7px 10px;border-radius:8px;font-size:12px;color:#fff;pointer-events:none}
-.sceneLabel span{color:#f5c451}
-#loading{position:absolute;inset:0;display:grid;place-items:center;background:#10212a;color:#fff;z-index:2}
-#loading.hidden{display:none}
-#controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
-button{border:0;border-radius:10px;background:var(--gold);color:#18252a;font-weight:750;font-size:15px;padding:12px 8px;min-height:46px;cursor:pointer;touch-action:manipulation}
-button:active{transform:scale(.98)}
-button.secondary{background:#294651;color:#f5fafb;border:1px solid #456571}
-button:disabled{opacity:.55}
-#controls .blank{visibility:hidden}
-.panels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-section{background:var(--panel);border:1px solid #2c4954;border-radius:14px;padding:14px;margin:10px 0}
-h2{font-size:17px;margin:0 0 10px;color:#f6d27b}
-label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
-input{width:100%;padding:12px;border:1px solid #55717b;border-radius:9px;background:#0d2028;color:white;font-size:16px}
-.small{font-size:12px;line-height:1.5;color:var(--muted)}
-#message{background:#122a34;border:1px solid #34535e;border-radius:10px;padding:11px;overflow-wrap:anywhere;font-size:14px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-footer{color:#8fa7b0;font-size:11px;text-align:center;padding:12px}
-@media(max-width:560px){body{padding:7px}header{align-items:flex-start}.money{font-size:11px;padding:7px 9px}.money strong{font-size:16px}.panels{grid-template-columns:1fr}#scene{height:390px}button{font-size:14px}}
+:root{--gold:#f4c24f;--panel:rgba(10,18,24,.91);--line:rgba(255,255,255,.15);--muted:#b7c4ca}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101820;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;touch-action:none}
+#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+#topbar{position:fixed;top:env(safe-area-inset-top,8px);left:10px;right:10px;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none}
+.brand,.stat,.panel,.hint{background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 24px #0005;backdrop-filter:blur(10px)}
+.brand{padding:9px 12px;border-radius:12px;font-weight:900;letter-spacing:.4px;font-size:13px}.brand small{display:block;color:var(--muted);font-weight:500;font-size:10px;letter-spacing:1.2px}
+.stats{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.stat{padding:8px 10px;border-radius:10px;font-size:12px;font-weight:800}.stat span{color:var(--gold)}
+#actions{position:fixed;right:12px;top:78px;display:flex;flex-direction:column;gap:8px;width:128px}
+button{border:1px solid #ffffff25;background:linear-gradient(180deg,#293943,#18262e);color:white;font:700 12px system-ui;border-radius:11px;padding:11px 9px;box-shadow:0 5px 14px #0004;cursor:pointer;touch-action:manipulation}
+button:active{transform:translateY(1px);filter:brightness(1.2)}button.primary{background:linear-gradient(180deg,#ffd76c,#c58a20);color:#201704;border-color:#ffdf83}
+#controls{position:fixed;left:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:52px 52px 52px;grid-template-rows:48px 48px 48px;gap:5px}
+.pad{font-size:19px;padding:0;border-radius:15px;background:#101c24c9;border:1px solid #ffffff2b;backdrop-filter:blur(8px);user-select:none}
+#up{grid-column:2;grid-row:1}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
+#help{position:fixed;left:14px;top:82px;max-width:min(54vw,300px);font-size:11px;line-height:1.45;color:#e5edf0;background:#101c24b8;border:1px solid #ffffff19;padding:9px 10px;border-radius:10px;pointer-events:none}
+#message{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0b141bea;border:1px solid #ffffff25;border-radius:12px;padding:10px 14px;font-size:12px;max-width:80vw;text-align:center;display:none}
+#modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:#02070bcc;backdrop-filter:blur(6px)}
+.panel{width:min(440px,100%);max-height:80vh;overflow:auto;border-radius:18px;padding:18px}.panel h2{font-size:20px;margin:0 0 6px}.panel p{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 14px}.items{display:grid;gap:8px}.item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px}.item strong{font-size:13px}.item small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.item button{min-width:78px}.modalfoot{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#101b22;z-index:5;text-align:center;padding:24px}#loading strong{font-size:23px}#loading small{display:block;color:var(--muted);margin-top:8px}
+@media(min-width:800px){#controls{opacity:.65}#help{max-width:260px}#actions{width:145px}}
 </style>
 </head>
 <body>
-<main>
-<header>
- <div><h1>🏙️ Lagos Life 2</h1><div class="tagline">GRASS TO GRACE · CITY BUILD 0.2</div></div>
- <div class="money">Demo game cash<strong>₦<span id="cash">500</span></strong></div>
-</header>
-<div id="sceneWrap">
- <canvas id="scene" aria-label="Interactive 3D Lagos city street"></canvas>
- <div class="sceneLabel">📍 <span>LASGIDI DISTRICT</span> · Explore the city</div>
- <div id="loading">Building the city…</div>
+<div id="game"></div>
+<div id="loading"><div><strong>🏙️ LAGOS LIFE 2</strong><small>Building your city…</small></div></div>
+<div id="topbar">
+  <div class="brand">LAGOS LIFE 2<small>GRASS TO GRACE · OPEN CITY</small></div>
+  <div class="stats"><div class="stat">₦ <span id="cash">25,000</span></div><div class="stat">JOB <span id="job">Unemployed</span></div></div>
 </div>
-<div id="controls" aria-label="Movement controls">
- <span class="blank"></span><button class="secondary" onclick="movePlayer(0,-1)">▲ Forward</button><span class="blank"></span>
- <button class="secondary" onclick="movePlayer(-1,0)">◀ Left</button><button onclick="job()">💼 Find job</button>
-<button onclick="interact()">🏪 Interact / Shop</button><button class="secondary" onclick="movePlayer(1,0)">Right ▶</button>
- <span class="blank"></span><button class="secondary" onclick="movePlayer(0,1)">▼ Back</button><span class="blank"></span>
+<div id="help">Explore the city. Walk to the market, dealership, clothing shop or property office. Tap an action to interact. Keyboard: WASD / arrows.</div>
+<div id="actions">
+  <button class="primary" id="interact">INTERACT</button>
+  <button id="jobBtn">💼 Find work</button>
+  <button id="marketBtn">🛒 Market</button>
+  <button id="carsBtn">🚘 Dealership</button>
+  <button id="clothesBtn">👕 Clothing</button>
+  <button id="houseBtn">🏠 Properties</button>
+  <button id="saveBtn">💾 Save</button>
 </div>
-<p id="message" role="status" aria-live="polite">Welcome to Lagos! Use the buttons to explore. City scenery is a visual prototype; cash is demo money.</p>
-<div class="panels">
- <section>
-  <h2>👤 Player account</h2>
-  <label for="displayName">Display name (registration only)</label><input id="displayName" placeholder="Your game name" maxlength="60" autocomplete="nickname">
-  <label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email">
-  <label for="password">Password</label><input id="password" type="password" placeholder="At least 8 characters" autocomplete="current-password">
-  <div class="actions"><button id="registerBtn" onclick="registerPlayer()">Register</button><button id="loginBtn" onclick="loginPlayer()">Login</button></div>
-  <button class="secondary" onclick="logout()">Logout</button>
-  <p id="account" class="small">Not logged in</p>
- </section>
- <section>
-  <h2>💾 Save your game</h2>
-  <div class="actions"><button onclick="saveProgress()">Save progress</button><button onclick="loadProgress()">Load progress</button></div>
-  <p class="small">Sign in before saving or loading. Your position and demo game cash are stored on the game server when the backend is available.</p>
-  <h2 style="margin-top:16px">🗺️ City guide</h2>
-  <p class="small">Look for the market stalls, roadside shops, houses, streetlights, trees, and moving cars. Use the movement buttons to explore. This is still an early 3D-style prototype, not the finished realistic game.</p>
- </section>
+<div id="controls">
+  <button class="pad" id="up" aria-label="Move forward">▲</button>
+  <button class="pad" id="left" aria-label="Move left">◀</button>
+  <button class="pad" id="down" aria-label="Move backward">▼</button>
+  <button class="pad" id="right" aria-label="Move right">▶</button>
 </div>
-<footer>Prototype only · No real-money value · Keep your account password private.</footer>
-</main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-const API="https://lagos-life-2-backend.onrender.com";
-const canvas=document.getElementById("scene");
-const loading=document.getElementById("loading");
-let renderer,scene,camera,playerMesh;
-let playerPos={x:0,z:4};
-let cash=500,token=null,player=null,busy=false;
-const movingCars=[];
- const inventory = { groceries: 0 };
+<div id="message"></div>
+<div id="modal"><div class="panel"><h2 id="modalTitle">City</h2><p id="modalDesc"></p><div class="items" id="items"></div><div class="modalfoot"><button id="closeModal">Close</button><button class="primary" id="modalSave">Save progress</button></div></div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
-function interact() {
-  // The roadside market stalls are on the left side of the road.
-  const stalls = [-29, -15, -1, 13, 27];
-
-  const nearMarket = playerPos.x <= -5.5 &&
-    stalls.some(z => Math.abs(playerPos.z - z) < 3.5);
-
-  if (!nearMarket) {
-    message("Move toward the market stalls on the left side of the road to buy goods.");
-    return;
-  }
-
-  const price = 150;
-
-  if (cash < price) {
-    message("You need ₦150 to buy groceries. Find a job first.");
-    return;
-  }
-
-  cash -= price;
-  inventory.groceries += 1;
-  showCash();
-
-  message(
-    "Purchase successful! You bought groceries for ₦150. " +
-    "Groceries owned: " + inventory.groceries
-  );
+const $=id=>document.getElementById(id);
+const state={cash:25000,job:'Unemployed',groceries:0,ownedCars:[],clothes:'Everyday',house:'None',color:'#d6a16b',lastPay:0};
+let scene,camera,renderer,clock,player,playerGroup,cityGroup,carGroup,traffic=[],keys={},touch={},yaw=0,walkTime=0,activeModal='',noticeTimer=0;
+const mat=(color,roughness=.85,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
+const M={
+ road:mat('#30383c'),line:mat('#e9d9a2'),concrete:mat('#8c918b'),grass:mat('#5d7950'),
+ skin:mat('#9b603d'),shirt:mat('#286d83'),pants:mat('#273746'),shoe:mat('#171b1e'),
+ glass:new THREE.MeshStandardMaterial({color:'#79a9b9',roughness:.25,metalness:.2,transparent:true,opacity:.72}),
+ tire:mat('#15191b'),rubber:mat('#202326'),white:mat('#e6e1d7'),gold:mat('#cba14a',.35,.55)
+};
+function box(parent,x,y,z,sx,sy,sz,material,opts={}){const m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);m.position.set(x,y,z);m.castShadow=opts.cast!==false;m.receiveShadow=true;parent.add(m);return m}
+function cylinder(parent,x,y,z,r1,r2,h,material,segments=12){const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m}
+function makeTextSprite(text,color='#fff'){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle='rgba(9,17,21,.86)';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#e9b844';ctx.lineWidth=5;ctx.strokeRect(3,3,506,122);ctx.font='bold 42px Arial';ctx.textAlign='center';ctx.fillStyle=color;ctx.fillText(text,256,78);const t=new THREE.CanvasTexture(c);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true}));s.scale.set(7,1.75,1);return s}
+function building(x,z,w,d,h,color,label,kind='office'){
+ const g=new THREE.Group();g.position.set(x,0,z);cityGroup.add(g);
+ box(g,0,h/2,0,w,h,d,mat(color),{cast:true});
+ box(g,0,h+.12,0,w+.25,.25,d+.25,mat('#4a5052'));
+ const floors=Math.max(2,Math.floor(h/2.5)),cols=Math.max(2,Math.floor(w/1.7));
+ for(let f=0;f<floors;f++)for(let c=0;c<cols;c++){
+  const wx=-w/2+.75+c*(w-1.1)/Math.max(1,cols-1),wy=1.2+f*(h-1.5)/floors;
+  if(wy<h-.25)box(g,wx,wy,d/2+.015,.55,.8,.035,Math.random()>.78?mat('#c7a45e'):M.glass,{cast:false});
  }
-function message(t){document.getElementById("message").textContent=t}
-function showCash(){document.getElementById("cash").textContent=Math.floor(cash).toLocaleString("en-NG")}
-function mat(color,roughness=0.88){return new THREE.MeshStandardMaterial({color,roughness})}
-function box(w,h,d,color,x,y,z,opts={}) {
- const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));
- mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;
- if(opts.rotationY)mesh.rotation.y=opts.rotationY;
- scene.add(mesh);return mesh;
-}
-function cylinder(rt,rb,h,color,x,y,z,segments=10){
- const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,segments),mat(color));
- mesh.position.set(x,y,z);mesh.castShadow=true;scene.add(mesh);return mesh;
-}
-function makeBuilding(x,z,w,d,h,color,label,shop=false){
- // concrete walls, roof parapet, windows, door, awning/sign for a lived-in Lagos streetscape
- box(w,h,d,color,x,h/2,z);
- box(w+.18,.16,d+.18,"#c9c3b5",x,h+.06,z);
- box(w+.24,.18,d+.24,"#5b5d59",x,h+.17,z);
- const rows=Math.max(1,Math.floor((h-.8)/1.15)), cols=Math.max(2,Math.floor(w/1.1));
- for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-  const wx=x-w/2+(c+.5)*w/cols, wy=.65+r*1.12;
-  box(.42,.5,.035,"#263d49",wx,wy,z-d/2-.025);
-  box(.45,.055,.05,"#ddd0b4",wx,wy-.28,z-d/2-.045);
-  box(.045,.5,.05,"#b7b8b2",wx,wy,z-d/2-.055);
+ box(g,0,.6,d/2+.12,w*.42,1.2,.18,mat('#4b3c2b'));
+ const sign=makeTextSprite(label);sign.position.set(0,h+.95,d/2+.2);g.add(sign);
+ if(kind==='market'){
+  for(let i=0;i<3;i++){box(g,-w*.32+i*w*.32,1.35,d/2+1,.8,.08,1.7,mat(['#d84d35','#e9c34f','#368e68'][i]));box(g,-w*.32+i*w*.32,1.9,d/2+1,.08,1.1,.08,mat('#5b4933'));}
  }
- box(Math.min(1.1,w*.25),1.65,.08,"#4d382a",x+w*.23,.83,z-d/2-.07);
- if(shop){
-  box(w*.88,.48,.16,"#17765f",x,.9,z-d/2-.14);
-  const sign=document.createElement("canvas");sign.width=256;sign.height=64;
-  const c=sign.getContext("2d");c.fillStyle="#126b54";c.fillRect(0,0,256,64);
-  c.fillStyle="#fff4cf";c.font="bold 27px Arial";c.textAlign="center";c.fillText(label,128,42);
-  const tex=new THREE.CanvasTexture(sign);
-  const sm=new THREE.Mesh(new THREE.PlaneGeometry(w*.86,.34),new THREE.MeshBasicMaterial({map:tex}));
-  sm.position.set(x,1.95,z-d/2-.24);scene.add(sm);
-  box(w*.98,.12,d*.28,"#d5a94f",x,2.2,z-d/2-.2);
- }
+ return g;
 }
-function makeTree(x,z,scale=1){
- cylinder(.06*scale,.1*scale,.9*scale,"#60442e",x,.45*scale,z,7);
- const crown=new THREE.Mesh(new THREE.SphereGeometry(.55*scale,9,7),mat("#327c4b"));
- crown.position.set(x,1.15*scale,z);crown.castShadow=true;scene.add(crown);
- const crown2=new THREE.Mesh(new THREE.SphereGeometry(.38*scale,8,6),mat("#438b53"));
- crown2.position.set(x+.22*scale,1.38*scale,z+.05);scene.add(crown2);
-}
-function makeCar(x,z,color,direction=1){
- const group=new THREE.Group();
- const body=new THREE.Mesh(new THREE.BoxGeometry(1.8,.52, .9),mat(color));
- body.position.y=.48;body.castShadow=true;group.add(body);
- const cabin=new THREE.Mesh(new THREE.BoxGeometry(.92,.42,.72),mat("#8eb7c4"));
- cabin.position.set(-.12,.91,0);cabin.castShadow=true;group.add(cabin);
- for(const wx of [-.58,.58])for(const wz of [-.48,.48]){
-  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.19,.19,.13,10),mat("#20272a"));
-  wheel.rotation.x=Math.PI/2;wheel.position.set(wx,.24,wz);group.add(wheel);
+function makeCar(color='#d7dce0',scale=1){
+ const g=new THREE.Group();const body=mat(color,.38,.22),dark=mat('#20272b',.35,.2),lamp=mat('#fff0bb',.25,.1),red=mat('#bd2d25',.3,.1);
+ box(g,0,.62,0,1.95,.55,3.8,body);
+ box(g,0,1.03,-.2,1.48,.65,1.95,body);
+ box(g,0,1.06,.02,1.38,.49,1.62,M.glass,{cast:false});
+ box(g,0,.65,1.94,1.65,.18,.12,dark);box(g,0,.65,-1.94,1.65,.18,.12,dark);
+ for(const x of [-1,1])for(const z of [-1.25,1.25]){
+  const wh=new THREE.Mesh(new THREE.CylinderGeometry(.36,.36,.22,16),M.tire);wh.rotation.z=Math.PI/2;wh.position.set(x,.38,z);wh.castShadow=true;g.add(wh);
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.23,12),mat('#aeb5b7',.35,.6));hub.rotation.z=Math.PI/2;hub.position.set(x*1.02,.38,z);g.add(hub);
  }
- const lightMat=mat("#f5e7af");
- for(const zoff of [-.27,.27]){
-  const light=new THREE.Mesh(new THREE.BoxGeometry(.08,.12,.1),lightMat);
-  light.position.set(.91,.48,zoff);group.add(light);
- }
- group.position.set(x,0,z);group.userData.speed=direction*(.025+Math.random()*.018);
- scene.add(group);movingCars.push(group);return group;
+ for(const x of [-.62,.62]){box(g,x,.72,1.93,.35,.18,.06,lamp);box(g,x,.72,-1.94,.3,.16,.06,red)}
+ g.scale.setScalar(scale);return g;
 }
-function makePlayer(){
+function makeHumanoid(){
  const g=new THREE.Group();
- const skin=mat("#8e5638"), shirt=mat("#f2bd43"), pants=mat("#253746"), shoe=mat("#181e21");
- const torso=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.75,12),shirt);torso.position.y=1.15;torso.castShadow=true;g.add(torso);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.22,12,10),skin);head.position.y=1.78;head.castShadow=true;g.add(head);
- const hair=new THREE.Mesh(new THREE.SphereGeometry(.225,12,8,0,Math.PI*2,0,Math.PI*.55),mat("#211a17"));hair.position.y=1.85;g.add(hair);
- const limbs=[];
- for(const sx of [-1,1]){
-  const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,.5,8),shirt);arm.position.set(sx*.34,1.2,0);arm.rotation.z=-sx*.12;arm.castShadow=true;g.add(arm);
-  const leg=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.58,8),pants);leg.position.set(sx*.13,.48,0);leg.castShadow=true;g.add(leg);limbs.push(leg);
-  const foot=new THREE.Mesh(new THREE.BoxGeometry(.2,.1,.32),shoe);foot.position.set(sx*.13,.12,.07);g.add(foot);
+ const torso=box(g,0,1.3,0,.57,.72,.31,mat(state.color));const neck=cylinder(g,0,1.75,0,.09,.09,.17,M.skin);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.22,20,16),M.skin);head.position.set(0,1.98,0);head.castShadow=true;g.add(head);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.225,16,10,0,Math.PI*2,0,Math.PI*.52),mat('#201914'));hair.position.set(0,2.06,0);g.add(hair);
+ const eyes=mat('#171717');for(const x of [-.075,.075])box(g,x,2.0,.195,.035,.025,.018,eyes,{cast:false});
+ const arms=[],legs=[];
+ for(const s of [-1,1]){
+  const arm=new THREE.Group();arm.position.set(s*.38,1.55,0);const upper=box(arm,0,-.22,0,.16,.48,.17,mat('#286d83'));const hand=new THREE.Mesh(new THREE.SphereGeometry(.085,12,10),M.skin);hand.position.y=-.5;arm.add(hand);g.add(arm);arms.push(arm);
+  const leg=new THREE.Group();leg.position.set(s*.17,.92,0);box(leg,0,-.27,0,.22,.58,.24,mat('#28313c'));box(leg,0,-.57,.07,.24,.14,.38,M.shoe);g.add(leg);legs.push(leg);
  }
- g.userData.legs=limbs;scene.add(g);return g;
+ g.userData={arms,legs,torso};return g;
 }
-function init3D(){
- if(!window.THREE){loading.textContent="3D library could not load. Check your internet and refresh.";return}
- scene=new THREE.Scene();scene.background=new THREE.Color("#a7cdd1");scene.fog=new THREE.Fog("#a7cdd1",35,90);
- camera=new THREE.PerspectiveCamera(48,1,.1,150);camera.position.set(0,15,21);camera.lookAt(0,0,0);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:"low-power"});
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- renderer.outputEncoding=THREE.sRGBEncoding;
- scene.add(new THREE.HemisphereLight("#e3f6ff","#5d6046",2));
- const sun=new THREE.DirectionalLight("#fff0d1",2.2);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
- // Ground and a long asphalt avenue with verges and footpaths
- box(100,.15,100,"#6f9b61",0,-.18,0);
- box(12,.08,90,"#383e42",0,-.08,0);
- box(1.15,.1,90,"#c5b99b",-6.5,-.04,0);box(1.15,.1,90,"#c5b99b",6.5,-.04,0);
- box(.14,.12,90,"#ded5b9",-5.85,.02,0);box(.14,.12,90,"#ded5b9",5.85,.02,0);
- for(let z=-42;z<44;z+=5)box(.14,.015,2.5,"#f5e6a3",0,.02,z);
- // Compound walls, varied concrete buildings and shops along both sides
- const palette=["#d8b995","#c98c65","#d4c7a4","#9eafaa","#d2a76c","#b8c4c2","#c57d63","#d7d0b9"];
- for(let i=0;i<7;i++){
-  const z=-35+i*11;
-  makeBuilding(-10.2,z,5.6,6.3,4.2+(i%3)*1.3,palette[i%palette.length],i===2?"MAMA PUT":i===4?"PHONE SHOP":"");
-  makeBuilding(10.5,z+3,6,6.8,4.8+((i+1)%3)*1.1,palette[(i+3)%palette.length],i===1?"PROVISIONS":i===5?"BARBER":"");
+function tree(x,z,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);cityGroup.add(g);cylinder(g,0,1.2,0,.16,.22,2.4,mat('#63472f'));for(let i=0;i<3;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(1.05-i*.15,1.8,8),mat(['#2d633d','#387546','#4c824a'][i]));c.position.set(0,2.1+i*.65,0);c.castShadow=true;g.add(c)}}
+function makeCity(){
+ cityGroup=new THREE.Group();scene.add(cityGroup);carGroup=new THREE.Group();scene.add(carGroup);
+ // A broad avenue and two side roads with sidewalks and dashed lane markings.
+ box(cityGroup,0,-.09,0,150,.18,18,M.road);box(cityGroup,0,.01,9.6,150,.22,1.2,M.concrete);box(cityGroup,0,.01,-9.6,150,.22,1.2,M.concrete);
+ for(let x=-72;x<75;x+=7)box(cityGroup,x,.015,0,3.2,.025,.12,M.line,{cast:false});
+ box(cityGroup,-19,-.08,0,13,.16,100,M.road);for(let z=-48;z<50;z+=7)box(cityGroup,-19,.02,z,.12,.025,3.2,M.line,{cast:false});
+ // blocks and compounds
+ const facades=['#c5a88a','#b5b8b1','#d6c5a8','#9bafa9','#d3b8a1','#b9a2a0','#d1c8b4','#8f9b9b'];
+ for(let side of [-1,1])for(let i=0;i<8;i++){
+  const x=-62+i*17,z=side*(18+Math.random()*5),w=9+Math.random()*4,d=8+Math.random()*4,h=7+Math.random()*12;
+  building(x,z,w,d,h,facades[(i+(side>0?2:0))%facades.length],['RESIDENCE','SHOPPING PLAZA','PHARMACY','ELECTRONICS','SUPERMARKET','FLATS','BANK','HOTEL'][i]);
  }
- // Street stalls and kiosk fronts
- for(let i=0;i<5;i++){
-  const z=-29+i*14;
-  box(1.9,1.3,1.4,"#bd7441",-7.8,.65,z);
-  box(2.05,.16,1.55,"#d3a04d",-7.8,1.38,z);
-  box(1.95,.12,1.5,"#3d7355",-7.8,1.48,z);
-  for(let k=0;k<3;k++)box(.36,.55,.05,["#f0c75e","#d95d43","#4b8b75"][k],-8.4+k*.58,.58,z-.74);
- }
- // Trees, shrubs, drainage covers, poles and wires along verges
- for(let i=0;i<13;i++){
-  const z=-40+i*6.5;
-  if(i%2===0)makeTree(-7.9,z,.72+(i%3)*.08);
-  else makeTree(7.9,z,.7);
-  box(.28,.22,.55,"#555b58",-6.3,.1,z+2);
-  cylinder(.045,.055,4.8,"#444a4b",i%2===0?-7.1:7.1,2.4,z,7);
-  box(.07,.05,.07,"#f1d47a",i%2===0?-7.1:7.1,4.6,z);
- }
- // Side streets crossing the avenue
- box(48,.08,5,"#3d4346",0,-.07,-18);
- for(let i=0;i<7;i++)box(1.8,.015,.16,"#e9dfb5",-5.4+i*1.8,.02,-18);
- // A bus stop and local transport
- box(2.4,2.2,.12,"#d6b76e",5.5,.95,11);
- box(2.2,.12,.12,"#253e47",5.5,2.1,11);
- box(1.4,.1,.1,"#f0c451",5.5,1.2,10.9);
- makeCar(-3,-12,"#d6ad36",1);makeCar(3,6,"#2b79a8",-1);makeCar(1,27,"#d6d8d3",1);makeCar(-2,-31,"#3d805f",-1);
- // Distant skyline creates depth
- for(let i=0;i<12;i++){
-  const x=(i-6)*7;
-  const h=5+(i%4)*2.5;
-  const b=new THREE.Mesh(new THREE.BoxGeometry(4,h,4),mat(["#81999b","#9aa9a6","#b3b6a7"][i%3]));
-  b.position.set(x,h/2,-49);scene.add(b);
-  for(let yy=1;yy<h;yy+=1.2)for(let xx=-1.2;xx<=1.2;xx+=1.2)box(.35,.38,.025,"#536d78",x+xx,yy,-46.97);
- }
- playerMesh=makePlayer();playerMesh.position.set(playerPos.x,0,playerPos.z);
- resize3D();loading.classList.add("hidden");animate();
+ building(-8,19,12,8,5,'#bd8f65','BALOGUN MARKET','market');
+ building(13,-20,10,8,6,'#d1c4aa','AUTO MART','office');
+ building(32,19,11,8,5,'#b6c2c2','FASHION HUB','office');
+ building(-37,-22,12,9,7,'#d7c9a8','PROPERTY OFFICE','office');
+ building(48,-23,11,9,10,'#aab8b7','CITY HOSPITAL','office');
+ for(let i=0;i<32;i++)tree(-67+Math.random()*134,(Math.random()<.5?-1:1)*(12+Math.random()*12),.65+Math.random()*.55);
+ // streetlights
+ for(let x=-65;x<70;x+=13)for(let side of [-1,1]){const g=new THREE.Group();g.position.set(x,0,side*7.3);cityGroup.add(g);cylinder(g,0,2.4,0,.06,.08,4.8,mat('#45494a'));box(g,.45,4.65,0,.95,.12,.22,mat('#41484a'));box(g,.83,4.56,0,.45,.12,.2,mat('#f5df9a'));}
+ // parked cars
+ const colors=['#c9d0d1','#9c2c25','#253e57','#d0b16b','#33393d','#ece6d7'];
+ for(let i=0;i<12;i++){const c=makeCar(colors[i%colors.length],.82);c.position.set(-59+i*10,.03,i%2?7.3:-7.3);c.rotation.y=i%2?Math.PI:0;carGroup.add(c);}
+ // moving traffic on main road
+ for(let i=0;i<8;i++){const c=makeCar(colors[(i+2)%colors.length],.8);c.position.set(-70+i*19,.03,i%2?3.1:-3.1);c.rotation.y=i%2?Math.PI:0;carGroup.add(c);traffic.push({mesh:c,speed:(i%2?1:-1)*(5+Math.random()*3),z:c.position.z});}
+ // smaller roadside stalls
+ for(let i=0;i<5;i++){const x=-50+i*20;box(cityGroup,x,.8,12.5,3.2,1.5,1.8,mat('#b87d49'));box(cityGroup,x,1.7,12.5,3.7,.12,2.2,mat(['#c34d39','#d9ae37','#367a55'][i%3]));}
 }
-function resize3D(){
- if(!renderer||!camera)return;
- const r=canvas.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);
- renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+function setSkinAndClothes(){if(!player)return;player.userData.torso.material=mat(state.clothes==='Formal'?'#182e4a':state.clothes==='Streetwear'?'#bd4438':'#286d83');}
+function setup(){
+ scene=new THREE.Scene();scene.background=new THREE.Color('#9dc5d4');scene.fog=new THREE.Fog('#9dc5d4',55,150);
+ camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,250);
+ renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;$('game').appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight('#d7eeff','#596047',2.1));
+ const sun=new THREE.DirectionalLight('#fff1d4',3);sun.position.set(-25,45,22);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-55;sun.shadow.camera.right=55;sun.shadow.camera.top=55;sun.shadow.camera.bottom=-55;scene.add(sun);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(250,250),mat('#68835a'));ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
+ makeCity();playerGroup=new THREE.Group();scene.add(playerGroup);player=makeHumanoid();playerGroup.add(player);playerGroup.position.set(0,0,0);
+ camera.position.set(0,7,10);clock=new THREE.Clock();
+ window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+ $('loading').style.display='none';animate();
 }
-let lastTime=0,step=0;
-function animate(t=0){
- requestAnimationFrame(animate);
- if(!renderer)return;
- const dt=Math.min(.05,(t-lastTime)/1000||.016);lastTime=t;step+=dt;
- movingCars.forEach(c=>{
-  c.position.z+=c.userData.speed*60*dt;
-  if(c.position.z>48)c.position.z=-48;
-  if(c.position.z< -48)c.position.z=48;
- });
- if(playerMesh){
-  const targetX=playerPos.x,targetZ=playerPos.z;
-  playerMesh.position.x+=(targetX-playerMesh.position.x)*.25;
-  playerMesh.position.z+=(targetZ-playerMesh.position.z)*.25;
-  playerMesh.rotation.y=0;
-  camera.position.x+=(playerMesh.position.x-camera.position.x)*.035;
-  camera.position.z+=(playerMesh.position.z+18-camera.position.z)*.035;
-  camera.lookAt(playerMesh.position.x,.4,playerMesh.position.z-2);
-  if(playerMesh.userData.legs)playerMesh.userData.legs.forEach((leg,i)=>{leg.rotation.x=Math.sin(step*9+i*Math.PI)*.18});
- }
+function animate(){
+ requestAnimationFrame(animate);if(!renderer)return;const dt=Math.min(clock.getDelta(),.04);
+ let dx=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0)+(touch.right?1:0)-(touch.left?1:0);
+ let dz=(keys.ArrowDown||keys.s?1:0)-(keys.ArrowUp||keys.w?1:0)+(touch.down?1:0)-(touch.up?1:0);
+ const len=Math.hypot(dx,dz);if(len>0){dx/=len;dz/=len;playerGroup.position.x+=dx*dt*6;playerGroup.position.z+=dz*dt*6;yaw=Math.atan2(dx,dz);playerGroup.rotation.y=yaw;walkTime+=dt*10;player.userData.legs[0].rotation.x=Math.sin(walkTime)*.55;player.userData.legs[1].rotation.x=-Math.sin(walkTime)*.55;player.userData.arms[0].rotation.x=-Math.sin(walkTime)*.4;player.userData.arms[1].rotation.x=Math.sin(walkTime)*.4;}else{player.userData.legs.forEach(x=>x.rotation.x*=.7);player.userData.arms.forEach(x=>x.rotation.x*=.7)}
+ playerGroup.position.x=THREE.MathUtils.clamp(playerGroup.position.x,-72,72);playerGroup.position.z=THREE.MathUtils.clamp(playerGroup.position.z,-46,46);
+ traffic.forEach(t=>{t.mesh.position.x+=t.speed*dt;if(t.mesh.position.x>78)t.mesh.position.x=-78;if(t.mesh.position.x< -78)t.mesh.position.x=78;});
+ const target=new THREE.Vector3(playerGroup.position.x,1.3,playerGroup.position.z);const behind=new THREE.Vector3(Math.sin(yaw)*9,5.4,Math.cos(yaw)*9);camera.position.lerp(target.clone().add(behind),1-Math.pow(.001,dt));camera.lookAt(target);
  renderer.render(scene,camera);
 }
-function movePlayer(dx,dz){
- if(!playerMesh)return;
- playerPos.x=Math.max(-8.5,Math.min(8.5,playerPos.x+dx*1.2));
- playerPos.z=Math.max(-42,Math.min(42,playerPos.z+dz*1.8));
- playerMesh.rotation.y=Math.atan2(dx,dz);
- message("Exploring Lasgidi District… Keep to the roadside and watch the traffic.");
-}
-function job(){cash+=100;showCash();message("Demo job completed! +₦100 game cash. This has no real-money value.");}
-async function api(path,options={}){
- const headers={"Content-Type":"application/json"};if(token)headers.Authorization="Bearer "+token;
- let response;try{response=await fetch(API+path,{...options,headers:{...headers,...(options.headers||{})}})}catch(e){throw new Error("Cannot reach game server. Check internet and backend status.")}
- const data=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error(data.error||data.message||("Request failed: "+response.status));
- return data;
-}
-async function registerPlayer(){
- if(busy)return;
- const displayName=document.getElementById("displayName").value.trim(),email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
- if(!displayName||!email||password.length<8){message("Enter a display name, email and password of at least 8 characters.");return}
- busy=true;document.getElementById("registerBtn").disabled=true;
- try{const data=await api("/api/auth/register",{method:"POST",body:JSON.stringify({email,password,displayName})});token=data.token;player=data.player;updateAccount();message("Account created. You are logged in.");await loadProgress(true)}
- catch(e){message("Registration: "+e.message)}finally{busy=false;document.getElementById("registerBtn").disabled=false}
-}
-async function loginPlayer(){
- if(busy)return;const email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
- if(!email||!password){message("Enter your email and password.");return}
- busy=true;document.getElementById("loginBtn").disabled=true;
- try{const data=await api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});token=data.token;player=data.player;updateAccount();message("Login successful. Loading saved game…");await loadProgress(true)}
- catch(e){message("Login: "+e.message)}finally{busy=false;document.getElementById("loginBtn").disabled=false}
-}
-function updateAccount(){document.getElementById("account").textContent=player?"Logged in as "+(player.display_name||player.displayName||player.email):"Not logged in"}
-function logout(){token=null;player=null;updateAccount();message("Logged out. Sign in again to save or load progress.")}
-async function saveProgress(){
- if(!token){message("Please log in before saving.");return}
- try{await api("/api/me/game-state",{method:"PUT",body:JSON.stringify({
-  state:{
-    x:playerPos.x,
-    y:playerPos.z,
-    cash,
-    inventory
-  }
-})});message("Progress saved to your account.")}
- catch(e){message("Save failed: "+e.message)}
-}
-
-async function loadProgress(silent=false){
- if(!token){
-  if(!silent) message("Please log in before loading.");
-  return;
- }
-
- try{
-  const data=await api("/api/me");
-  const state=data.game_state||(data.player&&data.player.game_state);
-
-  if(
-   state &&
-   typeof state==="object" &&
-   Number.isFinite(Number(state.cash)) &&
-   Number.isFinite(Number(state.x)) &&
-   Number.isFinite(Number(state.y))
-  ){
-   cash=Math.max(0,Math.min(100000000,Number(state.cash)));
-   playerPos.x=Math.max(-8.5,Math.min(8.5,Number(state.x)));
-   playerPos.z=Math.max(-42,Math.min(42,Number(state.y)));
-
-   inventory.groceries=Math.max(
-    0,
-    Number(state.inventory?.groceries)||0
-   );
-
-   if(playerMesh){
-    playerMesh.position.set(playerPos.x,0,playerPos.z);
-   }
-
-   showCash();
-
-   if(!silent){
-    message("Saved game loaded! Groceries: "+inventory.groceries);
-   }
-  }else if(!silent){
-   message("No saved game found yet. Explore and save your progress.");
-  }
- }catch(e){
-  message("Load failed: "+e.message);
- }
- }
-  
-showCash();
-try{init3D();window.addEventListener("resize",resize3D)}catch(e){loading.textContent="Could not start 3D city: "+e.message;message("3D startup error. Refresh the page or try another browser.")}
-</script>
-</body>
-  </html>
-  
+function notify(s){$('message').textContent=s;$('message').style.display='block';clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('message').style.display='none',2800)}
+function updateUI(){$('cash').textContent=Math.floor(state.cash).toLocaleString('en-NG');$('job').textContent=state.job}
+function save(){try{localStorage.setItem('lagosLife2Save',JSON.stringify(state));notify('Progress saved on this device.')}catch(e){notify('Could not save on this browser.')}updateUI()}
+function load(){try{const s=JSON.parse(localStorage.getItem('lagosLife2Save')||'null');if(s)Object.assign(state,s)}catch(e){}updateUI()}
+function openModal(title,desc,entries){activeModal=title;$('modalTitle').textContent=title;$('modalDesc').textContent=desc;$('items').innerHTML='';entries.forEach(it=>{const row=document.createElement('div');row.className='item';const info=document.createElement('div');info.innerHTML='<strong></strong><small></small>';info.children[0].textContent=it.name;info.children[1].textContent=it.desc;const b=document.createElement('button');b.textContent=it.button||('₦'+it.price.toLocaleString('en-NG'));b.className=it.primary?'primary':'';b.onclick=()=>it.action();row.append(info,b);$('items').appendChild(row)});$('modal').style.display='flex'}
+function closeModal(){$('modal').style.display='none';activeModal=''}
+function buy(name,price,fn){if(state.cash<price){notify('Not enough cash yet. Find work and try again.');return}state.cash-=price;fn();updateUI();save();notify(name+' purchased.')}
+function market(){openModal('Balogun Market','Buy supplies for your home. Prices are game currency, not real money.',[
+{name:'Groceries pack',desc:'Adds groceries to your inventory.',price:1800,action:()=>buy('Groceries pack',1800,()=>state.groceries+=1)},
+{name:'Family food basket',desc:'A larger basket of market food.',price:4200,action:()=>buy('Family food basket',4200,()=>state.groceries+=3)},
+{name:'Sell groceries',desc:'Sell one groceries pack for ₦1,200.',button:'Sell ₦1,200',action:()=>{if(state.groceries<1){notify('You do not have groceries to sell.');return}state.groceries--;state.cash+=1200;updateUI();save();notify('Groceries sold.')}}
+])}
+function jobs(){openModal('Work & Earn','Choose a job. Work rewards are in-game money only.',[
+{name:'Delivery rider',desc:'Quick delivery task · earn ₦3,500',button:'Do job',action:()=>{state.job='Delivery Rider';state.cash+=3500;state.lastPay=Date.now();updateUI();save();notify('Delivery complete: +₦3,500')}},
+{name:'Market assistant',desc:'Help a trader · earn ₦2,200',button:'Do job',action:()=>{state.job='Market Assistant';state.cash+=2200;state.lastPay=Date.now();updateUI();save();notify('Shift complete: +₦2,200')}},
+{name:'Construction helper',desc:'Work on a building site · earn ₦5,000',button:'Do job',action:()=>{state.job='Construction Helper';state.cash+=5000;state.lastPay=Date.now();updateUI();save();notify('Work complete: +₦5,000')}}
+])}
+function dealership(){const cars=[['Used compact car',850000,'Reliable starter car'],['Family sedan',2400000,'Comfortable four-door sedan'],['SUV',6500000,'Higher ride and more space'],['Luxury saloon',18000000,'Premium executive car']];openModal('Auto Mart','Own a vehicle in your save. These prices are fictional in-game prices.',cars.map(([name,price,desc])=>({name,price,desc,button:state.ownedCars.includes(name)?'Owned':'Buy',action:()=>{if(state.ownedCars.includes(name)){notify('You already own this vehicle.');return}buy(name,price,()=>state.ownedCars.push(name));}})))}
+function clothing(){const choices=[['Everyday',0,'Everyday blue shirt'],['Streetwear',4500,'Red streetwear outfit'],['Formal',12500,'Smart formal outfit']];openModal('Fashion Hub','Change your character outfit. New looks stay saved.',choices.map(([name,price,desc])=>({name,price,desc,button:state.clothes===name?'Wearing':price===0?'Wear':'Buy',action:()=>{if(state.clothes===name){notify('You are already wearing this.');return}if(price===0){state.clothes=name;setSkinAndClothes();save();return}buy(name,price,()=>{state.clothes=name;setSkinAndClothes()})}})))}
+function properties(){const homes=[['Room in shared flat',450000,'A first place to stay'],['Self-contained apartment',3200000,'Private r
